@@ -27,15 +27,16 @@ import com.honeywell.poi.util.ExcelUtil;
 
 public class App {
     public static void main( String[] args ) throws Exception {
-    	mainStart("F:/GB/0727-0731-SH-1.xls", "SVV_DG_F7X_LD15.3_SH", "F7X_INAV_LD15.3", "F:/test.xlsx");
+    	mainStart("F:/GB/0727-0731-SH-1.xls", "SVV_DG_F7X_LD15.3_SH", "F7X_INAV_LD15.3", "F:/GB/HTSC_SVV_DnG_Quality_Data_Metrics-1.xlsx");
     }
 
 	public static String mainStart(String path, String program, String functions, String template) {
+		String result = "Congratulations! Program is finished!";
 		try {
 			Workbook wb = WorkbookFactory.create(new File(path.trim()));
 	    	Map<String, String> paramMap = getParamMap(path.trim());
 			Sheet sheet = wb.getSheetAt(0);
-	    	RowColumn rowColumn = getIndexByName(path.trim(), "WBS Element Description");
+	    	RowColumn rowColumn = getIndexByName(path.trim(), Constant.PROGRAM);
 	    	//String program = "SVV_DG_F7X_LD15.3_SH";
 	    	String remarks = "REPLT;RARW;RAR;REW;RFSF;RRW;RFSFR;RFSFRW;SCRW";
 	    	//String functions = "F7X_INAV_LD15.3";
@@ -44,27 +45,42 @@ public class App {
 	    	Set<String> remarkSet = new HashSet<String>(Arrays.asList(remarks.split(";")));
 	    	Set<String> functionSet = new HashSet<String>(Arrays.asList(functions.trim().split(";")));
 	    	if(rowColumn!=null){
-	    		List<InitialData> datas = new ArrayList<InitialData>();
-	    		Map<String, Double> totalActualMap = new HashMap<String, Double>(functionSet.size());
-	    		System.out.println("=======================获取原始数据========================");
-	    		getInitalData(sheet, rowColumn, program.trim(), dimensionMap, remarkSet,
-						functionSet, datas, totalActualMap);
-				///合并记录
-				System.out.println("=======================合并记录========================");
-				List<CopqData> dataList = getCopqData(paramMap, program.trim(), functionSet, datas,
-						totalActualMap);
-				System.out.println("=======================写结果========================");
-				ExcelUtil.getInstance().exportObj2Excel1(dataList, CopqData.class, template.trim());
-				System.out.println("=======================END========================");
+	    		if (rowColumn.getProgramColumnIndex()==null) {
+					result = "This column name 'WBS Element Description' can not be found! Please check the column name of source file!";
+				}else if (rowColumn.getFunctionColumnIndex()==null) {
+					result = "This column name 'Act Desc' can not be found! Please check the column name of source file!";
+				}else {
+					if (rowColumn.isNotNull()) {
+		    			List<InitialData> datas = new ArrayList<InitialData>();
+			    		Map<String, Double> totalActualMap = new HashMap<String, Double>(functionSet.size());
+			    		System.out.println("=======================获取原始数据========================");
+			    		getInitalData(sheet, rowColumn, program.trim(), dimensionMap, remarkSet,
+								functionSet, datas, totalActualMap);
+						if (datas.size()>0) {
+							///合并记录
+							System.out.println("=======================合并记录========================");
+							List<CopqData> dataList = getCopqData(sheet, program.trim(), functionSet, datas,
+									totalActualMap);
+							System.out.println("=======================写结果========================");
+							ExcelUtil.getInstance().exportObj2Excel1(dataList, CopqData.class, template.trim());
+							System.out.println("=======================END========================");
+						}else {
+							result = "This program or function can not be find, please check!";
+						}
+					}else {
+						result = "Please check the column name of source file!";
+					}
+				}
+	    		
 	    	}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return "ERROR: "+e.getMessage();
 		}
-		return "Congratulations! Program is finished!";
+		return result;
 	}
-
-	private static List<CopqData> getCopqData(Map<String, String> paramMap, String program,
+//Map<String, String> paramMap,
+	private static List<CopqData> getCopqData(Sheet sheet, String program,
 			Set<String> functionSet, List<InitialData> datas,
 			Map<String, Double> totalActualMap) {
 		CopqData copqData = null;//
@@ -73,13 +89,14 @@ public class App {
 		while (functionIterator.hasNext()) {
 			String function = functionIterator.next();
 			copqData = new CopqData();
-			copqData.setMonth(getMonth(paramMap.get("num")));
+			//copqData.setMonth(getMonth(paramMap.get("num")));
+			copqData.setMonth(sheet.getSheetName());
 			copqData.setProgram(program);
 			copqData.setFunction(function);
 			copqData.setTotalActualEfforts(totalActualMap.get(function));
 			double h1=0,h2=0,h3=0,h4=0;
 			for(InitialData data : datas){
-				if(data.getFunction().equals(function)&&data.getType()!=null){
+				if(data.getFunction().equalsIgnoreCase(function)&&data.getType()!=null){
 					switch (data.getType().getIndex()) {
 					case 1:
 						h1+=data.getHours();
@@ -121,18 +138,18 @@ public class App {
 				Row headerRow =sheet.getRow(i);
 				if(headerRow!=null){
 					//int columnCount = headerRow.getPhysicalNumberOfCells();
-					initialData = new InitialData();
 					Cell pCell = headerRow.getCell(rowColumn.getProgramColumnIndex());
 					if(pCell!=null){
 						pCell.setCellType(HSSFCell.CELL_TYPE_STRING);
 						String myProgram = pCell.getStringCellValue().trim();
-						if(myProgram.equals(program)){
+						if(myProgram.equalsIgnoreCase(program)){
 							Cell fCell = headerRow.getCell(rowColumn.getFunctionColumnIndex());
 							Cell hCell = headerRow.getCell(rowColumn.getHoursColumnIndex());
 							if(fCell!=null){
 								fCell.setCellType(HSSFCell.CELL_TYPE_STRING);
 								String function = fCell.getStringCellValue().trim();
 								if(isNotContains(functionSet, function)){
+									initialData = new InitialData();
 									double totalActualEfforts = 0;
 									Cell rCell = headerRow.getCell(rowColumn.getRemarkColumnIndex());
 									if(rCell!=null){
@@ -233,20 +250,23 @@ public class App {
 						Cell cell = headerRow.getCell(j);
 						if(cell!=null){
 							cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-							if(cell.getStringCellValue().equals(Constant.PROGRAM)){
+							if(cell.getStringCellValue().equalsIgnoreCase(Constant.PROGRAM)){
 								rowColumn.setRowIndex(i);
 								rowColumn.setProgramColumnIndex(j);
-							}else if(cell.getStringCellValue().equals(Constant.REMARK)){
+							}else if(cell.getStringCellValue().equalsIgnoreCase(Constant.REMARK)){
 								rowColumn.setRemarkColumnIndex(j);
-							}else if(cell.getStringCellValue().equals(Constant.HOURS)){
+							}else if(cell.getStringCellValue().equalsIgnoreCase(Constant.HOURS)){
 								rowColumn.setHoursColumnIndex(j);						
-							}else if(cell.getStringCellValue().equals(Constant.FUNCTION)){
+							}else if(cell.getStringCellValue().equalsIgnoreCase(Constant.FUNCTION)){
 								rowColumn.setFunctionColumnIndex(j);
 							}
 							if(rowColumn.isNotNull()){
 								break;
 							}
 						}
+					}
+					if(rowColumn.isRightRow()){
+						break;
 					}
 				}
 			}

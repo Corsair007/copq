@@ -40,7 +40,7 @@ public class MainFrame extends JFrame implements MouseListener {
 	private JTextField txt_4 = new JTextField(25);
 	
 	public MainFrame() {
-		panel1.setBounds(10, 5, 414, 210);
+		panel1.setBounds(10, 10, 414, 210);
 		panel1.setLayout(null);
 		label_1.setBounds(6, 17, 115, 23);
 		panel1.add(label_1);
@@ -54,7 +54,7 @@ public class MainFrame extends JFrame implements MouseListener {
 		panel1.add(label_3);
 		txt_3.setBounds(163, 101, 230, 23);
 		panel1.add(txt_3);
-		label_4.setBounds(10, 149, 156, 23);
+		label_4.setBounds(6, 149, 156, 23);
 		panel1.add(label_4);
 		txt_4.setBounds(163, 149, 230, 23);
 		panel1.add(txt_4);
@@ -68,7 +68,7 @@ public class MainFrame extends JFrame implements MouseListener {
 		panel12.setLayout(null);
 		panel12.add(panel1);
 		getContentPane().add(panel12);
-		jButton.setBounds(162, 221, 90, 31);
+		jButton.setBounds(167, 230, 90, 31);
 		panel12.add(jButton);
 		jButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {

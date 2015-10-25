@@ -47,4 +47,11 @@ public class RowColumn {
 		return false;
 	}
 	
+	public boolean isRightRow(){
+		if(this.rowIndex!=null||this.programColumnIndex!=null||this.remarkColumnIndex!=null||this.hoursColumnIndex!=null){
+			return true;
+		}
+		return false;
+	}
+	
 }

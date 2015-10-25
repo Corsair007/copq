@@ -499,11 +499,7 @@ public class ExcelUtil {
 		try {
 			fos = new FileOutputStream(outPath);
 			wb.write(fos);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
+		}finally {
 			try {
 				if(fos!=null) fos.close();
 			} catch (IOException e) {
