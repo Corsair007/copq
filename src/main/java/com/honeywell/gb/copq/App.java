@@ -65,7 +65,7 @@ public class App {
 							ExcelUtil.getInstance().exportObj2Excel1(dataList, CopqData.class, template.trim());
 							System.out.println("=======================END========================");
 						}else {
-							result = "It's remark does not require inspection, please check!";
+							result = "The program and function do not exist or do not match, please check!";
 						}
 					}else {
 						result = "Please check the column name of source file!";
@@ -150,6 +150,7 @@ public class App {
 								String function = fCell.getStringCellValue().trim();
 								if(isContains(functionSet, function)){
 									initialData = new InitialData();
+									initialData.setProgram(myProgram);
 									double totalActualEfforts = 0;
 									Cell rCell = headerRow.getCell(rowColumn.getRemarkColumnIndex());
 									if(rCell!=null){
@@ -167,7 +168,6 @@ public class App {
 												r = remark;
 											}
 										}
-										initialData.setProgram(myProgram);
 										initialData.setFunction(function);
 										if(isContains(remarkSet, r)){
 											initialData.setRemark(rCell.getStringCellValue().trim());
