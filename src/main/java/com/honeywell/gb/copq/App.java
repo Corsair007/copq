@@ -65,7 +65,7 @@ public class App {
 							ExcelUtil.getInstance().exportObj2Excel1(dataList, CopqData.class, template.trim());
 							System.out.println("=======================END========================");
 						}else {
-							result = "This program or function can not be find, please check!";
+							result = "It's remark does not require inspection, please check!";
 						}
 					}else {
 						result = "Please check the column name of source file!";
@@ -148,7 +148,7 @@ public class App {
 							if(fCell!=null){
 								fCell.setCellType(HSSFCell.CELL_TYPE_STRING);
 								String function = fCell.getStringCellValue().trim();
-								if(isNotContains(functionSet, function)){
+								if(isContains(functionSet, function)){
 									initialData = new InitialData();
 									double totalActualEfforts = 0;
 									Cell rCell = headerRow.getCell(rowColumn.getRemarkColumnIndex());
@@ -167,11 +167,11 @@ public class App {
 												r = remark;
 											}
 										}
-										if(isNotContains(remarkSet, r)){
-											initialData.setProgram(myProgram);
+										initialData.setProgram(myProgram);
+										initialData.setFunction(function);
+										if(isContains(remarkSet, r)){
 											initialData.setRemark(rCell.getStringCellValue().trim());
 											initialData.setType(dimensionMap.get(r.toUpperCase()));
-											initialData.setFunction(function);
 											if(hCell!=null){
 												//hCell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
 												hCell.setCellType(HSSFCell.CELL_TYPE_STRING);
@@ -182,8 +182,8 @@ public class App {
 												initialData.setHours(Double.valueOf(hour));
 											}
 											//System.out.println(i+":"+initialData.getRemark()+"--->"+initialData.getHours());
-											datas.add(initialData);
 										}
+										datas.add(initialData);
 									}
 									if(hCell!=null){
 										//hCell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
@@ -213,7 +213,7 @@ public class App {
 		}
 	}
     
-    private static boolean isNotContains(Set<String> set, String name){
+    private static boolean isContains(Set<String> set, String name){
     	Iterator<String> iterator = set.iterator();
     	while (iterator.hasNext()) {
     		if (iterator.next().equalsIgnoreCase(name)) {
