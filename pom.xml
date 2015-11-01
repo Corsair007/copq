@@ -50,6 +50,14 @@
 		<version>2.4</version>
 	</dependency>
 	
+	 <dependency> 
+        <groupId>com.ctreber</groupId> 
+        <artifactId>aclibico</artifactId> 
+        <version>2.0</version> 
+        <scope>system</scope> 
+        <systemPath>F:/GB/aclibico-2.0.jar</systemPath> 
+    </dependency>
+	
   </dependencies>
   <build>
   <!-- <pluginManagement> -->
@@ -103,7 +111,7 @@
 								<mainClass>com.honeywell.ui.MainFrame</mainClass>
 								<preCp>anything</preCp>
 							</classPath>
-							<!-- <icon>src/resources/0.ico</icon> -->
+							<icon>src/main/resources/favicon.ico</icon>
 							<jre>
 								<minVersion>1.7.0</minVersion>
 								<jdkPreference>preferJre</jdkPreference>

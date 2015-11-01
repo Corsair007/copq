@@ -2,6 +2,8 @@ package com.honeywell.ui;
 
 import static com.honeywell.ui.SwingConsole.run;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -40,23 +42,24 @@ public class MainFrame extends JFrame implements MouseListener {
 	private JTextField txt_4 = new JTextField(25);
 	
 	public MainFrame() {
-		panel1.setBounds(10, 10, 414, 210);
+		//setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\Administrator\\Desktop\\favicon.ico"));
+		panel1.setBounds(10, 105, 378, 210);
 		panel1.setLayout(null);
-		label_1.setBounds(6, 17, 115, 23);
+		label_1.setBounds(10, 25, 115, 23);
 		panel1.add(label_1);
-		txt_1.setBounds(163, 17, 230, 23);
+		txt_1.setBounds(135, 25, 230, 23);
 		panel1.add(txt_1);
-		label_2.setBounds(6, 56, 115, 23);
+		label_2.setBounds(10, 64, 115, 23);
 		panel1.add(label_2);
-		txt_2.setBounds(163, 56, 230, 23);
+		txt_2.setBounds(135, 64, 230, 23);
 		panel1.add(txt_2);
-		label_3.setBounds(6, 101, 115, 23);
+		label_3.setBounds(10, 109, 115, 23);
 		panel1.add(label_3);
-		txt_3.setBounds(163, 101, 230, 23);
+		txt_3.setBounds(135, 109, 230, 23);
 		panel1.add(txt_3);
-		label_4.setBounds(6, 149, 156, 23);
+		label_4.setBounds(10, 157, 156, 23);
 		panel1.add(label_4);
-		txt_4.setBounds(163, 149, 230, 23);
+		txt_4.setBounds(135, 157, 230, 23);
 		panel1.add(txt_4);
 		
 		Border border = BorderFactory.createTitledBorder("COPQ-Report");
@@ -68,8 +71,14 @@ public class MainFrame extends JFrame implements MouseListener {
 		panel12.setLayout(null);
 		panel12.add(panel1);
 		getContentPane().add(panel12);
-		jButton.setBounds(167, 230, 90, 31);
+		jButton.setBounds(149, 325, 90, 31);
 		panel12.add(jButton);
+		
+		JLabel lblHoneywell = new JLabel("Honeywell");
+		lblHoneywell.setForeground(Color.RED);
+		lblHoneywell.setFont(new Font("Times New Roman", Font.BOLD, 54));
+		lblHoneywell.setBounds(76, 20, 264, 75);
+		panel12.add(lblHoneywell);
 		jButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				String path = txt_1.getText();
@@ -89,7 +98,7 @@ public class MainFrame extends JFrame implements MouseListener {
 		txt_4.addMouseListener(this);
 	}
 	public static void main(String[] args) {
-		run(new MainFrame(), 450, 300);
+		run(new MainFrame(), 410, 410);
 	}
 	public void mouseClicked(MouseEvent e) {
 		JFileChooser jFileChooser = new JFileChooser();
