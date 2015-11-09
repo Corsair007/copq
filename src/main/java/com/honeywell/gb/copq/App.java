@@ -1,6 +1,7 @@
 package com.honeywell.gb.copq;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,11 +13,14 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.honeywell.poi.entry.CopqData;
 import com.honeywell.poi.entry.InitialData;
@@ -27,13 +31,22 @@ import com.honeywell.poi.util.ExcelUtil;
 
 public class App {
     public static void main( String[] args ) throws Exception {
-    	mainStart("F:/GB/0727-0731-SH-1.xls", "SVV_DG_F7X_LD15.3_SH", "F7X_INAV_LD15.3", "F:/GB/HTSC_SVV_DnG_Quality_Data_Metrics-1.xlsx");
+    	mainStart("F:/GB/2015_Aug_SH.xlsx", "SVV_DG_F7X_LD15.3_SH", "F7X_INAV_LD15.3", "F:/GB/HTSC_SVV_DnG_Quality_Data_Metrics.xlsx");
     }
 
 	public static String mainStart(String path, String program, String functions, String template) {
 		String result = "Congratulations! Program is finished!";
 		try {
-			Workbook wb = WorkbookFactory.create(new File(path.trim()));
+			 Workbook wb = null;
+			 String sourcePpath = path.trim();
+			 String suffix = sourcePpath.substring(sourcePpath.lastIndexOf(".")+1);
+			 if ("xls".equals(suffix)) {
+				 POIFSFileSystem fs = new POIFSFileSystem(new FileInputStream(sourcePpath));  
+				 wb = new HSSFWorkbook(fs);  
+			 }else {
+				 wb = new XSSFWorkbook(new FileInputStream(sourcePpath));
+			 }
+			//Workbook wb = WorkbookFactory.create(new File(path.trim()));
 	    	Map<String, String> paramMap = getParamMap(path.trim());
 			Sheet sheet = wb.getSheetAt(0);
 	    	RowColumn rowColumn = getIndexByName(path.trim(), Constant.PROGRAM);
